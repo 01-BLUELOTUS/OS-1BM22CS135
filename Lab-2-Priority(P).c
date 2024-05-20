@@ -9,27 +9,22 @@ void sort(int proc_id[], int p[], int at[], int bt[], int b[], int n, int priori
         {
             if ((priority_type == 1 && p[i] > p[j]) || (priority_type == 2 && p[i] < p[j]))
             {
-                // Swap priorities
                 temp = p[i];
                 p[i] = p[j];
                 p[j] = temp;
 
-                // Swap arrival times
                 temp = at[i];
                 at[i] = at[j];
                 at[j] = temp;
 
-                // Swap burst times
                 temp = bt[i];
                 bt[i] = bt[j];
                 bt[j] = temp;
 
-                // Swap backup burst times
                 temp = b[i];
                 b[i] = b[j];
                 b[j] = temp;
 
-                // Swap process IDs
                 temp = proc_id[i];
                 proc_id[i] = proc_id[j];
                 proc_id[j] = temp;
