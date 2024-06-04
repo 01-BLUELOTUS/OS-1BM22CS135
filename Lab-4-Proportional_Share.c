@@ -27,7 +27,7 @@ int main()
 
   for (int i = 0; i < n; i++)
 {
-    printf("\nThe Process: %s gets %0.3f%% of Processor Time.\n", p[i].name, ((p[i].T / total_T) * 100));
+    printf("\nThe Process: %s gets %0.2f%% of Processor Time.\n", p[i].name, ((p[i].T / total_T) * 100));
   }
 
   return 0;
