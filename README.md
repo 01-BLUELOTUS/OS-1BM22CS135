@@ -13,3 +13,5 @@ B) Round Robin (Experiment with different quantum sizes for RR algorithm)</h3>
 a) Rate-Monotonic 
 b) Earliest-deadline First
 c) Proportional scheduling</h3>
+<h1>LABORATORY PROGRAM-5</h1>
+<h3>Write a C program to simulate producer-consumer problem using semaphores.</h3>
