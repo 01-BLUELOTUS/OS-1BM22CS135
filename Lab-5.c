@@ -1,14 +1,24 @@
-#include <semaphore.h>
 #include <stdlib.h>
 #include <stdio.h>
 
 #define BufferSize 5
 
-sem_t empty, full, mutex;
 int buffer[BufferSize];
 int in = 0, out = 0;
 
 int maxP, maxC;
+int empty = BufferSize, full = 0, mutex = 1;
+
+void wait(int *S)
+{
+    while (*S <= 0);
+    (*S)--;
+}
+
+void signal(int *S)
+ {
+    (*S)++;
+}
 
 void producer()
 {
@@ -16,13 +26,13 @@ void producer()
     while (pItems < maxP)
     {
         int item = rand();
-        sem_wait(&empty);
-        sem_wait(&mutex);
+        wait(&empty);
+        wait(&mutex);
         buffer[in] = item;
         printf("Producer produced item %d at %d\n", item, in);
         in = (in + 1) % BufferSize;
-        sem_post(&mutex);
-        sem_post(&full);
+        signal(&mutex);
+        signal(&full);
         pItems++;
     }
 }
@@ -32,13 +42,13 @@ void consumer()
     int cItems = 0;
     while (cItems < maxC)
     {
-        sem_wait(&full);
-        sem_wait(&mutex);
+        wait(&full);
+        wait(&mutex);
         int item = buffer[out];
         printf("Consumer consumed item %d from %d\n", item, out);
         out = (out + 1) % BufferSize;
-        sem_post(&mutex);
-        sem_post(&empty);
+        signal(&mutex);
+        signal(&empty);
         cItems++;
     }
 }
@@ -57,19 +67,12 @@ int main()
     printf("Enter maximum items each consumer can consume: ");
     scanf("%d", &maxC);
 
-    sem_init(&empty, 0, BufferSize);
-    sem_init(&full, 0, 0);
-    sem_init(&mutex, 0, 1);
-
     producer();
     consumer();
 
-    sem_destroy(&empty);
-    sem_destroy(&full);
-    sem_destroy(&mutex);
-
     return 0;
 }
+
 
 
 
