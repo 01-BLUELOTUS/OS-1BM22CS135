@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#define BufferSize 5
+#define BufferSize 10
 
 int buffer[BufferSize];
 int in = 0, out = 0;
@@ -66,12 +66,19 @@ int main()
 
     printf("Enter maximum items each consumer can consume: ");
     scanf("%d", &maxC);
+    for(int i=1;i<=numPs;i++)
+    {
+        producer();
+    }
+    for(int i=1;i<=numCs;i++)
+    {
+        consumer();
+    }
 
-    producer();
-    consumer();
 
     return 0;
 }
+
 
 
 
