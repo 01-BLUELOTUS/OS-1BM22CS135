@@ -8,7 +8,21 @@ pthread_t *P;
 pthread_mutex_t *CS;
 int num_Ps, num_Cs;
 
-void dine(int n);
+void dine(int n)
+{
+  printf("\nPhilosopher %d is thinking ", n);
+
+  pthread_mutex_lock(&CS[n - 1]); 
+  pthread_mutex_lock(&CS[n % num_Cs]); 
+
+  printf("\nPhilosopher %d is eating ", n);
+  sleep(3); 
+
+  pthread_mutex_unlock(&CS[n - 1]); 
+  pthread_mutex_unlock(&CS[n % num_Cs]); 
+  
+  printf("\nPhilosopher %d Finished eating ", n);
+}
 
 int main()
 {
@@ -65,20 +79,4 @@ int main()
   free(CS);
 
   return 0;
-}
-
-void dine(int n)
-{
-  printf("\nPhilosopher %d is thinking ", n);
-
-  pthread_mutex_lock(&CS[n - 1]); 
-  pthread_mutex_lock(&CS[n % num_Cs]); 
-
-  printf("\nPhilosopher %d is eating ", n);
-  sleep(3); 
-
-  pthread_mutex_unlock(&CS[n - 1]); 
-  pthread_mutex_unlock(&CS[n % num_Cs]); 
-  
-  printf("\nPhilosopher %d Finished eating ", n);
 }
