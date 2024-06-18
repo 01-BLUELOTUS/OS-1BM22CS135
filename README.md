@@ -15,3 +15,7 @@ b) Earliest-deadline First
 c) Proportional scheduling</h3>
 <h1>LABORATORY PROGRAM-5</h1>
 <h3>Write a C program to simulate producer-consumer problem using semaphores.</h3>
+<h1>LABORATORY PROGRAM-6</h1>
+<h3>Write a C program to simulate the concept of Dining-Philosophers problem.</h3>
+<h1>LABORATORY PROGRAM-7</h1>
+<h3>Write a C program to simulate Bankers algorithm for the purpose of deadlock avoidance.</h3>
