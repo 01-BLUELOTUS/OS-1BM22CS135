@@ -19,3 +19,8 @@ c) Proportional scheduling</h3>
 <h3>Write a C program to simulate the concept of Dining-Philosophers problem.</h3>
 <h1>LABORATORY PROGRAM-7</h1>
 <h3>Write a C program to simulate Bankers algorithm for the purpose of deadlock avoidance.</h3>
+<h1>LABORATORY PROGRAM-8</h1>
+<h3>Write a C program to simulate deadlock detection</h3>
+<h1>LABORATORY PROGRAM-9</h1>
+<h3>Write a C program to simulate the following contiguous memory allocation techniques
+a) Worst-fit, b) Best-fit, c) First-fit</h3>
