@@ -1,18 +1,18 @@
 #include <stdio.h>
 
-void Print(char *method, int PSize[], int Alloc[], int n) {
-    printf("\n%s Allocation:\nProcess No.\tProcess Size\tBlock no.\n", method);
+void Print(char *method, int PSize[], int Alloc[], int BSize[], int n, int m) {
+    printf("\nMemory Management Scheme - %s\n", method);
+    printf("File_no\tFile_size\tBlock_no\tBlock_size\tFragment\n");
     for (int i = 0; i < n; i++) {
-        printf(" %i\t\t%i\t\t", i + 1, PSize[i]);
+        printf("%d\t%d\t\t", i + 1, PSize[i]);
         if (Alloc[i] != -1)
-            printf("%i", Alloc[i] + 1);
+            printf("%d\t\t%d\t\t%d\n", Alloc[i] + 1, BSize[Alloc[i]], BSize[Alloc[i]] - PSize[i]);
         else
-            printf("Not Allocated, waiting");
-        printf("\n");
+            printf("Not Allocated\t-\t\t-\n");
     }
 }
 
-void firstFit(int BSize[], int m, int PSize[], int n, int Alloc[]) {
+void firstFit(int BSize[], int m, int PSize[], int n, int Alloc[], int BSizeCopy[]) {
     for (int i = 0; i < n; i++)
         Alloc[i] = -1;
 
@@ -25,9 +25,11 @@ void firstFit(int BSize[], int m, int PSize[], int n, int Alloc[]) {
             }
         }
     }
+
+    Print("First Fit", PSize, Alloc, BSizeCopy, n, m);
 }
 
-void bestFit(int BSize[], int m, int PSize[], int n, int Alloc[]) {
+void bestFit(int BSize[], int m, int PSize[], int n, int Alloc[], int BSizeCopy[]) {
     for (int i = 0; i < n; i++)
         Alloc[i] = -1;
 
@@ -43,9 +45,11 @@ void bestFit(int BSize[], int m, int PSize[], int n, int Alloc[]) {
             BSize[bestIdx] -= PSize[i];
         }
     }
+
+    Print("Best Fit", PSize, Alloc, BSizeCopy, n, m);
 }
 
-void worstFit(int BSize[], int m, int PSize[], int n, int Alloc[]) {
+void worstFit(int BSize[], int m, int PSize[], int n, int Alloc[], int BSizeCopy[]) {
     for (int i = 0; i < n; i++)
         Alloc[i] = -1;
 
@@ -61,6 +65,8 @@ void worstFit(int BSize[], int m, int PSize[], int n, int Alloc[]) {
             BSize[worstIdx] -= PSize[i];
         }
     }
+
+    Print("Worst Fit", PSize, Alloc, BSizeCopy, n, m);
 }
 
 int main() {
@@ -75,24 +81,19 @@ int main() {
         BSize3[i] = BSize[i];
     }
 
-    printf("Enter number of processes: ");
+    printf("Enter number of files: ");
     scanf("%d", &n);
     int PSize[n];
-    printf("Enter sizes of the processes: ");
+    printf("Enter sizes of the files: ");
     for (int i = 0; i < n; i++) {
         scanf("%d", &PSize[i]);
     }
 
     int Alloc[n];
 
-    firstFit(BSize, m, PSize, n, Alloc);
-    Print("First Fit", PSize, Alloc, n);
-
-    bestFit(BSize2, m, PSize, n, Alloc);
-    Print("Best Fit", PSize, Alloc, n);
-
-    worstFit(BSize3, m, PSize, n, Alloc);
-    Print("Worst Fit", PSize, Alloc, n);
+    firstFit(BSize, m, PSize, n, Alloc, BSize);
+    bestFit(BSize2, m, PSize, n, Alloc, BSize2);
+    worstFit(BSize3, m, PSize, n, Alloc, BSize3);
 
     return 0;
 }
