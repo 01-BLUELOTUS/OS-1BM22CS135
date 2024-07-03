@@ -3,7 +3,6 @@
 int main() {
     int n, m, i, j, k;
 
-    // Take user input for number of processes and resources
     printf("Enter the number of processes: ");
     scanf("%d", &n);
     printf("Enter the number of resources: ");
@@ -11,7 +10,6 @@ int main() {
 
     int alloc[n][m], request[n][m], avail[m];
 
-    // Take user input for allocation matrix
     printf("Enter the allocation matrix:\n");
     for (i = 0; i < n; i++) {
         printf("Process %d: ", i);
@@ -20,7 +18,6 @@ int main() {
         }
     }
 
-    // Take user input for request matrix
     printf("Enter the request matrix:\n");
     for (i = 0; i < n; i++) {
         printf("Process %d: ", i);
@@ -29,7 +26,6 @@ int main() {
         }
     }
 
-    // Take user input for available resources
     printf("Enter the available resources: ");
     for (j = 0; j < m; j++) {
         scanf("%d", &avail[j]);
@@ -37,10 +33,9 @@ int main() {
 
     int finish[n], safeSeq[n], work[m], flag;
     for (i = 0; i < n; i++) {
-        finish[i] = 0; // Initially all processes are unfinished
+        finish[i] = 0; 
     }
 
-    // Copy available resources to work array
     for (j = 0; j < m; j++) {
         work[j] = avail[j];
     }
@@ -72,7 +67,6 @@ int main() {
         }
     }
 
-    // Check for deadlock
     int deadlock = 0;
     for (i = 0; i < n; i++) {
         if (finish[i] == 0) {
