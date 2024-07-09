@@ -1,82 +1,98 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
-#include <unistd.h> // for sleep function
-#include <semaphore.h>
+#include <unistd.h>
 
-pthread_t *P;
-pthread_mutex_t *CS;
-int num_Ps, num_Cs;
+#define MAX_PHILOSOPHERS 100 
 
-void dine(int n)
-{
-  printf("\nPhilosopher %d is thinking ", n);
+int mutex = 1;
+int mutex2 = 2; 
 
-  pthread_mutex_lock(&CS[n - 1]); 
-  pthread_mutex_lock(&CS[n % num_Cs]); 
+int philosophers[MAX_PHILOSOPHERS]; 
 
-  printf("\nPhilosopher %d is eating ", n);
-  sleep(3); 
-
-  pthread_mutex_unlock(&CS[n - 1]); 
-  pthread_mutex_unlock(&CS[n % num_Cs]); 
-  
-  printf("\nPhilosopher %d Finished eating ", n);
+void wait(int *sem) {
+    while (*sem <= 0); 
+    (*sem)--;
 }
 
-int main()
-{
-  int i, status_message;
-  void *msg;
+void signal(int *sem) {
+    (*sem)++;
+}
 
-  printf("Enter the number of philosophers: ");
-  scanf("%d", &num_Ps);
-  num_Cs = num_Ps; 
-  P = (pthread_t *)malloc(num_Ps * sizeof(pthread_t));
-  CS = (pthread_mutex_t *)malloc(num_Cs * sizeof(pthread_mutex_t));
+void* one_eat_at_a_time(void* arg) {
+    int philosopher = ((int) arg);
 
-  for (i = 0; i < num_Cs; i++)
-  {
-    status_message = pthread_mutex_init(&CS[i], NULL);
-    if (status_message != 0)
-    {
-      printf("\n Mutex initialization failed");
-      exit(1);
+    wait(&mutex); 
+    printf("Philosopher %d is granted to eat\n", philosopher + 1); 
+    sleep(1); 
+    printf("Philosopher %d has finished eating\n", philosopher + 1);
+    signal(&mutex);
+    return NULL;
+}
+
+void* two_eat_at_a_time(void* arg) {
+    int philosopher = ((int) arg);
+
+    wait(&mutex2);
+    printf("Philosopher %d is granted to eat\n", philosopher + 1); 
+    sleep(1); 
+    printf("Philosopher %d has finished eating\n", philosopher + 1);
+    signal(&mutex2); 
+
+    return NULL;
+}
+
+int main() {
+    int N;
+    printf("Enter the total number of philosophers: ");
+    scanf("%d", &N);
+
+    int hungry_count;
+    printf("How many are hungry: ");
+    scanf("%d", &hungry_count);
+
+    int hungry_philosophers[hungry_count];
+    for (int i = 0; i < hungry_count; i++) {
+        printf("Enter philosopher %d position (1 to %d): ", i + 1, N);
+        scanf("%d", &hungry_philosophers[i]);
+        hungry_philosophers[i]--; 
     }
-  }
 
-  for (i = 0; i < num_Ps; i++)
-  {
-    status_message = pthread_create(&P[i], NULL, (void *)dine, (void *)(intptr_t)(i + 1));
-    if (status_message != 0)
-    {
-      printf("\n Thread creation error \n");
-      exit(1);
-    }
-  }
+    pthread_t thread[hungry_count];
 
-  for (i = 0; i < num_Ps; i++)
-  {
-    status_message = pthread_join(P[i], &msg);
-    if (status_message != 0)
-    {
-      printf("\n Thread join failed \n");
-      exit(1);
-    }
-  }
+    int choice;
 
-  for (i = 0; i < num_Cs; i++)
-  {
-    status_message = pthread_mutex_destroy(&CS[i]);
-    if (status_message != 0)
-    {
-      printf("\n Mutex Destroyed \n");
-      exit(1);
-    }
-  }
+    do {
+        printf("\n1. One can eat at a time\n2. Two can eat at a time\n3. Exit\nEnter your choice: ");
+        scanf("%d", &choice);
+        switch (choice) {
+            case 1:
+                printf("Allow one philosopher to eat at any time\n");
+                for (int i = 0; i < hungry_count; i++) {
+                    philosophers[i] = hungry_philosophers[i]; 
+                    pthread_create(&thread[i], NULL, one_eat_at_a_time, &philosophers[i]);
+                }
+                for (int i = 0; i < hungry_count; i++) {
+                    pthread_join(thread[i], NULL);
+                }
+                break;
+            case 2:
+                printf("Allow two philosophers to eat at the same time\n");
+                for (int i = 0; i < hungry_count; i++) {
+                    philosophers[i] = hungry_philosophers[i]; 
+                    pthread_create(&thread[i], NULL, two_eat_at_a_time, &philosophers[i]);
+                }
+                for (int i = 0; i < hungry_count; i++) {
+                    pthread_join(thread[i], NULL);
+                }
+                break;
+            case 3:
+                printf("Exit\n");
+                break;
+            default:
+                printf("Invalid choice. Please try again.\n");
+        }
+    } while (choice != 3);
 
-  free(P);
-  free(CS);
-
-  return 0;
+    return 0;
 }
