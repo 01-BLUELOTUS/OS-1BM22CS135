@@ -24,3 +24,5 @@ c) Proportional scheduling</h3>
 <h1>LABORATORY PROGRAM-9</h1>
 <h3>Write a C program to simulate the following contiguous memory allocation techniques
 a) Worst-fit, b) Best-fit, c) First-fit.</h3>
+<h1>LABORATORY PROGRAM-10</h1>
+<h3>Write a C program to simulate page replacement algorithms a) FIFO, b) LRU, c) Optimal</h3>
