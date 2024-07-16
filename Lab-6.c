@@ -96,3 +96,74 @@ int main() {
 
     return 0;
 }
+
+
+
+
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <pthread.h>
+#include <unistd.h>
+#include <semaphore.h>
+
+pthread_t *P;
+pthread_mutex_t *CS;
+int num_Ps, num_CS;
+
+void *dine(void *arg) {
+    int n = (intptr_t)arg;
+    printf("\n P %d is thinking", n);
+    pthread_mutex_lock(&CS[n]);
+    pthread_mutex_lock(&CS[(n + 1) % num_CS]);
+    printf("\n P %d is eating", n);
+    sleep(3);
+    pthread_mutex_unlock(&CS[n]);
+    pthread_mutex_unlock(&CS[(n + 1) % num_CS]);
+    printf("\n P %d finished eating", n);
+    return NULL;
+}
+
+int main() {
+    int i, s;
+
+    printf("\n Enter the number of philosophers: ");
+    scanf("%d", &num_Ps);
+    num_CS = num_Ps;
+
+    P = (pthread_t *)malloc(num_Ps * sizeof(pthread_t));
+    CS = (pthread_mutex_t *)malloc(num_CS * sizeof(pthread_mutex_t));
+
+    for (i = 0; i < num_CS; i++) {
+        pthread_mutex_init(&CS[i], NULL);
+    }
+
+    for (i = 0; i < num_Ps; i++) {
+        s = pthread_create(&P[i], NULL, dine, (void *)(intptr_t)i);
+        if (s != 0) {
+            printf("\n Thread creation error\n");
+            exit(1);
+        }
+    }
+
+    for (i = 0; i < num_Ps; i++) {
+        s = pthread_join(P[i], NULL);
+        if (s != 0) {
+            printf("\n Thread join failed\n");
+            exit(1);
+        }
+    }
+
+    for (i = num_CS - 1; i >= 0; i--) {
+        s = pthread_mutex_destroy(&CS[i]);
+        if (s != 0) {
+            printf("\n Mutex destroyed\n");
+            exit(1);
+        }
+    }
+
+    free(P);
+    free(CS);
+    return 0;
+}
