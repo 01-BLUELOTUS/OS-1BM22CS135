@@ -3,41 +3,42 @@
 #include <pthread.h>
 #include <unistd.h>
 
-#define MAX_PHILOSOPHERS 100 
+#define MAX_PHILOSOPHERS 100
 
 int mutex = 1;
-int mutex2 = 2; 
+int mutex2 = 2;
 
-int philosophers[MAX_PHILOSOPHERS]; 
+int philosophers[MAX_PHILOSOPHERS];
 
 void wait(int *sem) {
-    while (*sem <= 0); 
+    while (*sem <= 0);
     (*sem)--;
 }
 
-void signal(int *sem) {
+void Signal(int *sem) {
     (*sem)++;
 }
 
 void* one_eat_at_a_time(void* arg) {
-    int philosopher = ((int) arg);
+    int philosopher = *((int*) arg);
 
-    wait(&mutex); 
-    printf("Philosopher %d is granted to eat\n", philosopher + 1); 
-    sleep(1); 
+    wait(&mutex);
+    printf("Philosopher %d is granted to eat\n", philosopher + 1);
+    sleep(1);
     printf("Philosopher %d has finished eating\n", philosopher + 1);
-    signal(&mutex);
+    Signal(&mutex);
+
     return NULL;
 }
 
 void* two_eat_at_a_time(void* arg) {
-    int philosopher = ((int) arg);
+    int philosopher = *((int*) arg);
 
     wait(&mutex2);
-    printf("Philosopher %d is granted to eat\n", philosopher + 1); 
-    sleep(1); 
+    printf("Philosopher %d is granted to eat\n", philosopher + 1);
+    sleep(1);
     printf("Philosopher %d has finished eating\n", philosopher + 1);
-    signal(&mutex2); 
+    Signal(&mutex2);
 
     return NULL;
 }
@@ -55,7 +56,7 @@ int main() {
     for (int i = 0; i < hungry_count; i++) {
         printf("Enter philosopher %d position (1 to %d): ", i + 1, N);
         scanf("%d", &hungry_philosophers[i]);
-        hungry_philosophers[i]--; 
+        hungry_philosophers[i]--;
     }
 
     pthread_t thread[hungry_count];
@@ -69,7 +70,7 @@ int main() {
             case 1:
                 printf("Allow one philosopher to eat at any time\n");
                 for (int i = 0; i < hungry_count; i++) {
-                    philosophers[i] = hungry_philosophers[i]; 
+                    philosophers[i] = hungry_philosophers[i];
                     pthread_create(&thread[i], NULL, one_eat_at_a_time, &philosophers[i]);
                 }
                 for (int i = 0; i < hungry_count; i++) {
@@ -79,7 +80,7 @@ int main() {
             case 2:
                 printf("Allow two philosophers to eat at the same time\n");
                 for (int i = 0; i < hungry_count; i++) {
-                    philosophers[i] = hungry_philosophers[i]; 
+                    philosophers[i] = hungry_philosophers[i];
                     pthread_create(&thread[i], NULL, two_eat_at_a_time, &philosophers[i]);
                 }
                 for (int i = 0; i < hungry_count; i++) {
